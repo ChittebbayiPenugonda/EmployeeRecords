@@ -1,0 +1,14 @@
+table{
+    margin: 0 auto;
+    border-spacing: 0 8px;
+}
+table td{
+    padding:7px;
+
+}
+table tr{
+    margin: 2px;
+}
+table tr td{
+    cursor: pointer;
+}

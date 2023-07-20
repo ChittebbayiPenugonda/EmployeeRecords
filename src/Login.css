@@ -1,0 +1,36 @@
+body{
+    background-color:rgb(255, 255, 255);
+    height:100vh;
+}
+.logincard{
+    margin: 0 auto;
+    margin-top: 20vh;
+    width: 20vw;
+    background-color:rgb(255, 255, 255);
+    padding: 20px;
+    box-shadow: 1px 5px 10px #0000005b;
+}
+.logincard img{
+    width: 20vw;
+
+}
+.logincard h1{
+    text-align: center;
+    
+}
+.logincard button{
+    padding: 15px;
+    background-color:rgb(60, 80, 168);
+    color:white;
+    font-size:18px;
+    border:none;
+    cursor:pointer;
+    box-shadow: 1px 1px 8px #0000005b;
+    margin-top:10px;
+}
+.logincard .buttonwrapper{
+    display:flex;
+    flex-direction: row;
+    justify-content:center;
+    width:20vw;
+}

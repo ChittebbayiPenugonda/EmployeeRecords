@@ -1,0 +1,38 @@
+.allselections{
+    display:flex;
+    flex-direction:column;
+    float:right;
+}
+.selectionrowwrapper{
+
+    display:flex;
+    flex-direction:row;
+    justify-content:flex-start;
+}
+.selectionrowwrapper .card{
+    padding:70px;
+    margin:20px;
+    border-radius: 20px;
+    color:white;
+    background-image:linear-gradient(rgb(91, 91, 91),rgb(47, 47, 47));
+    font-size: 18px;
+    text-decoration:none ;
+    width: 7vw;
+    height: 4vw;
+    text-align:center;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+}
+.activecard{
+    background-image: linear-gradient(rgb(81, 175, 81), green) !important;
+}
+.allcard{
+    background-image: linear-gradient(rgb(59, 59, 231), rgb(17, 17, 163)) !important;
+}
+.excard{
+    background-image: linear-gradient(rgb(185, 119, 74), rgb(194, 79, 2)) !important;
+}
+.selectionrowwrapper a{
+    text-decoration:none;
+}
