@@ -310,7 +310,7 @@ const EmploymentInfoSection = ({employee, id, getEmployee}) => {
             <div>
                 <h4>Onboarding Date: {employee.onboardingDate}</h4>
                 <h4>Start Date: {employee.startDate}</h4>
-                <h4>Employee Status: {employee.employeeStatus ? 'active' : 'innactive'}</h4>
+                <h4>Employee Status: {employee.employeeStatus ? 'active' : 'inactive'}</h4>
                 <h4>Designation: {employee.designation}</h4>
             </div>
         </section>

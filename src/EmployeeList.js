@@ -64,7 +64,7 @@ const EmployeeList = () => {
                 <tr style={{backgroundColor: employee.employeeStatus ? "#54d179" : "#ff5454"}}>
                         <td onClick= {() => {goToEmployee('/employee/' + employee.id)}}>{employee.fname}</td>
                         <td onClick= {() => {goToEmployee('/employee/' + employee.id)}}>{employee.lname}</td>
-                        <td onClick= {() => {goToEmployee('/employee/' + employee.id)}}>{employee.employeeStatus ? 'active' : 'innactive'}</td>
+                        <td onClick= {() => {goToEmployee('/employee/' + employee.id)}}>{employee.employeeStatus ? 'active' : 'inactive'}</td>
                         <td onClick= {() => {goToEmployee('/employee/' + employee.id)}}>{employee.designation}</td>
                         <td onClick= {() => {goToEmployee('/employee/' + employee.id)}}>{employee.personalEmailId}</td>
                 </tr>

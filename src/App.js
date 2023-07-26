@@ -1,6 +1,6 @@
 import './App.css';
 import EmployeeList from './EmployeeList';
-import {BrowserRouter as Router, Route, Switch} from 'react-router-dom';
+import {HashRouter as Router, Route, Switch} from 'react-router-dom';
 import NewEmployee from './NewEmployee';
 import Employee from './Employee';
 import Dashboard from './Dashboard';

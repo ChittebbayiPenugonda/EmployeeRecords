@@ -70,7 +70,7 @@ const ExEmployeeList = () => {
                 <tr onClick= {() => {goToEmployee('/employee/' + employee.id)}} style={{backgroundColor: employee.employeeStatus ? "#54d179" : "#ff5454"}}>
                         <td>{employee.fname}</td>
                         <td>{employee.lname}</td>
-                        <td>{employee.employeeStatus ? 'active' : 'innactive'}</td>
+                        <td>{employee.employeeStatus ? 'active' : 'inactive'}</td>
                         <td>{employee.designation}</td>
                         <td>{employee.personalEmailId}</td>
                 </tr>
