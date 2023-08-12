@@ -1,15 +1,18 @@
-import { useState, useEffect} from 'react';
-import {useParams} from 'react-router-dom';
+import { useContext, useState, useEffect} from 'react';
+import {Route, Redirect, useParams} from 'react-router-dom';
 import {db, auth, storage} from './config/firebase';
 import { getDoc, collection, deleteDoc, addDoc, doc, updateDoc } from 'firebase/firestore';
 import Nav from './Nav.js';
 import './Employee.css';
 import {ref, getDownloadURL, } from 'firebase/storage';
 import {useHistory} from 'react-router-dom';
+import {AuthContext} from './Auth.js';
 import {v4} from 'uuid';
 import {uploadBytes} from 'firebase/storage';
 
 const Employee = () => {
+    const {currentUser} = useContext(AuthContext);
+
     const {id} = useParams();
     const employeeRef = doc(db, "employees", id)
     const [employee, setEmployee] = useState(null);
@@ -19,7 +22,9 @@ const Employee = () => {
     
     const getEmployee = async () => {
         try{
+
             const employeeData = await getDoc(employeeRef);
+            //if (currentUser.email() == employeeData.data().personalEmailId || )
             setEmployee(employeeData.data());
 
             //loadDocuments(employeeData);
@@ -40,7 +45,6 @@ const Employee = () => {
     if(pending){
         return (<p>Loading...</p>);
     }
-
     return (  
         <div className="employeeinfodiv" style={{display:"flex", flexDirection: "column"}}>
         <Nav/>
@@ -198,7 +202,7 @@ const PersonalInfoSection = ({employee, id, getEmployee}) => {
                             onChange = {(e) => setPhysicalAddress(e.target.value)}
                         />
                         </div><br></br><br></br>
-                        <button onClick={pushEdits}>Push Edits</button>
+                        <button onClick={pushEdits}>Save</button>
                 </section>
         );
     }
@@ -300,7 +304,7 @@ const EmploymentInfoSection = ({employee, id, getEmployee}) => {
                         /><br></br><br></br>
                         </div>
                         
-                    <button onClick={pushEdits}>Push Edits</button>
+                    <button onClick={pushEdits}>Save</button>
                 </section>
         );
     }
@@ -402,7 +406,7 @@ const AuthorizationInfoSection = ({employee, id, getEmployee}) => {
                             onChange = {(e) => setWorkAuthExpiryDate(e.target.value)}
                         /><br></br><br></br>
                         </div>
-                        <button onClick={pushEdits}>Push Edits</button>
+                        <button onClick={pushEdits}>Save</button>
                 </section>
         );
     }
@@ -563,7 +567,7 @@ const DocumentInfoSection = ({employee, id, getEmployee}) => {
                             onChange = {(e) => setI9(e.target.value)}
                         /><br></br><br></br>
                         </div>
-                        <button onClick={pushEdits}>Push Edits</button>
+                        <button onClick={pushEdits}>Save</button>
                 </section>
         );
     }
@@ -693,7 +697,7 @@ const OtherInfoSection = ({employee, id, getEmployee}) => {
                             onChange = {(e) => setUniversityName(e.target.value)}
                         /><br></br><br></br>
                         </div>
-                        <button onClick={pushEdits}>Push Edits</button>
+                        <button onClick={pushEdits}>Save</button>
                 </section>
         );
     }
@@ -883,7 +887,7 @@ const DocumentsSection = ({employee, id, getEmployee}) => {
                     ))}
                     </div>
                     
-                    <button onClick={pushEdits}>Push Edits</button>
+                    <button onClick={pushEdits}>Save</button>
             </section>
 
         );
@@ -918,7 +922,7 @@ const DocumentsSection = ({employee, id, getEmployee}) => {
                 <button onClick={addDocument}>Add Document</button>
                 <br />
                 </div>
-                <button onClick={pushEdits}>Push Edits</button>
+                <button onClick={pushEdits}>Save</button>
         </section>
         )
     }
@@ -970,14 +974,27 @@ const ActionsSection = ({employee, id, getEmployee}) => {
     const[universityName, setUniversityName] = useState(employee.universityName);
     const[contactNo, setContactNo] = useState(employee.contactNo);
 
+    const[deletePopup, setDeletePopup] = useState(false); 
     const history = useHistory();
     const [editing, setEditing] = useState(false);
     const deleteEmployee = async (id) => {
+        setDeletePopup(true);
+
+        /*const employeeDoc = doc(db,"employees", id);
+        await deleteDoc(employeeDoc);
+        //getEmployeeList();
+        history.push("/employeedeleted");*/
+        
+    }
+    const finalizeDelete = async (id) => {
         const employeeDoc = doc(db,"employees", id);
         await deleteDoc(employeeDoc);
         //getEmployeeList();
         history.push("/employeedeleted");
-        
+    }
+
+    const cancelDelete = () => {
+        setDeletePopup(false);
     }
     const editEmployee = () => {
         setEditing(true);
@@ -1040,6 +1057,7 @@ const ActionsSection = ({employee, id, getEmployee}) => {
             <section>
             <h1>Actions</h1>
                     <div>
+
                         <button onClick={() => {stopEditingEmployee()}}>Cancel Editing</button>
                         <form className="newemployeeform" style={{display:'flex', flexDirection:'column', marginLeft: '20vw', marginRight: '20vw'}}>
                 <section>
@@ -1327,7 +1345,7 @@ const ActionsSection = ({employee, id, getEmployee}) => {
                         </div>
                 </section>
 
-                <button onClick={ pushEdits}>Push Edits</button>
+                <button onClick={ pushEdits}>Save</button>
             </form>
                     </div>
             </section>
@@ -1338,6 +1356,13 @@ const ActionsSection = ({employee, id, getEmployee}) => {
         <section>
             <h1>Actions</h1>
                     <div>
+                    <div className="popup" style={{display: deletePopup ? "block" : "none"}}>
+                            <section>
+                                <h1>Are you sure you want to Delete?</h1>
+                                <button onClick={()=> cancelDelete()}>Cancel</button>
+                                <button onClick={()=> finalizeDelete(id)} style={{backgroundColor: "red"}}>Confirm</button>
+                            </section>
+                        </div>
                     <button onClick={() => {editEmployee()}}>Edit Employee</button>
                     <button onClick={() => {deleteEmployee(id)}} style={{backgroundColor: "red"}}>Delete Employee</button>
                     </div>

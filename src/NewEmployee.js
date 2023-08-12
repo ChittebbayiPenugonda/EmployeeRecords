@@ -1,5 +1,7 @@
 import {useState, useEffect} from 'react';
 import {useHistory} from 'react-router-dom';
+import {useFormik} from 'formik';
+import { basicSchema } from './schemas';
 import {db, storage} from './config/firebase';
 import {collection, addDoc} from 'firebase/firestore';
 import {ref, uploadBytes} from 'firebase/storage';
@@ -50,6 +52,11 @@ const NewEmployee = () => {
     
     const history = useHistory();
 
+    //FORMIK STUFF
+
+
+    //FORMIK STUFF
+
     const uploadFiles = (docID) =>{
         if(documentFiles.length == 0) return;
         for(let i = 0; i < documentFiles.length; i+=1){
@@ -78,41 +85,41 @@ const NewEmployee = () => {
         console.log("file title " + fileTitle);
         console.log("file " + file);
     }
-    const handleSubmit = async (e) => {
-        e.preventDefault();
+    const onSubmit = async ( values, actions) => {
+       // e.preventDefault();
         let docID = '';
         try{
             await addDoc(employeeCollection,{
-                fname: fname,
-                mname:mname,
-                lname: lname, 
-                onboardingDate: onboardingDate,
-                startDate: startDate,
-                employeeStatus: employeeStatus,
-                designation: designation,
-                workAuth: workAuth, 
-                workAuthStartDate: workAuthStartDate,
-                workAuthExpiryDate: workAuthExpiryDate,
-                dateOfBirth: dateOfBirth,
-                passportNumber: passportNumber,
-                passportExpiry: passportExpiry,
-                dlNumber: dlNumber,
-                dlExpiry: dlExpiry,
-                stateID: stateID,
-                stateIDExpiry: stateIDExpiry,
-                I94No: I94No,
-                I94StartDate: I94StartDate,
-                I94ExpiryDate: I94ExpiryDate,
-                I9: I9,
-                eVerify: eVerify,
-                totalAmendments: totalAmendments,
-                totalExtensions: totalExtensions,
-                personalEmailId: personalEmailId,
-                payrollAddress: payrollAddress,
-                physicalAddress: physicalAddress,
-                physicalState: physicalState,
-                universityName: universityName,
-                contactNo: contactNo,
+                fname: values.fname, //required
+                mname: values.mname,
+                lname: values.lname, //required
+                onboardingDate: values.onboardingDate, //required
+                startDate: values.startDate,
+                employeeStatus: values.employeeStatus, //required
+                designation: values.designation,
+                workAuth: values.workAuth,  //required
+                workAuthStartDate: values.workAuthStartDate,
+                workAuthExpiryDate: values.workAuthExpiryDate,
+                dateOfBirth: values.dateOfBirth, //required
+                passportNumber: values.passportNumber, //required
+                passportExpiry: values.passportExpiry, //required
+                dlNumber: values.dlNumber,
+                dlExpiry: values.dlExpiry,
+                stateID: values.stateID,
+                stateIDExpiry: values.stateIDExpiry,
+                I94No: values.I94No, //required
+                I94StartDate: values.I94StartDate, //required
+                I94ExpiryDate: values.I94ExpiryDate, //required
+                I9: values.I9, //required
+                eVerify: values.eVerify, //required
+                totalAmendments: values.totalAmendments,
+                totalExtensions: values.totalExtensions,
+                personalEmailId: values.personalEmailId, //required
+                payrollAddress: values.payrollAddress,
+                physicalAddress: values.physicalAddress,
+                physicalState: values.physicalState,
+                universityName: values.universityName,
+                contactNo: values.contactNo, //required
                 documents: documents,
             }).then( ref => {
                 docID = ref.id;
@@ -124,6 +131,53 @@ const NewEmployee = () => {
         }
     }
 
+    const formik = useFormik({
+        _initialValues: {
+            fname: "",
+            mname: "",
+            dateOfBirth: "",
+            lname: "",
+            onboardingDate: "",
+            startDate: "",
+            employeeStatus: false,
+            designation: "",
+            workAuth: "",
+            workAuthStartDate: "",
+            workAuthExpiryDate: "",
+            dateOfBirth:"",
+            passportNumber: "",
+            passportExpiry:"",
+            dlNumber:"",
+            dlExpiry:"",
+            stateID: "",
+            stateIDExpiry: "",
+            I94No:"",
+            I94StartDate: "",
+            I94ExpiryDate:"",
+            I9:"",
+            eVerify:false,
+            totalAmendments:"",
+            totalExtensions:"",
+            personalEmailId:"",
+            payrollAddress:"",
+            physicalAddress:"",
+            physicalState:"",
+            universityName:"",
+            contactNo:"",
+
+        },
+        get initialValues() {
+            return this._initialValues;
+        },
+        set initialValues(value) {
+            this._initialValues = value;
+        },
+        validationSchema: basicSchema,
+        onSubmit,
+    });
+
+    console.log(formik.errors);
+
     return ( 
         
         <div className="newemployee">
@@ -132,102 +186,135 @@ const NewEmployee = () => {
             <form className="newemployeeform" style={{display:'flex', flexDirection:'column', marginLeft: '20vw', marginRight: '20vw'}}>
                 <section>
                     <h1>Personal Info</h1>
-                        <div>
+                    <div>
                         <label>First Name</label>
-                        <input 
+                        <input
+                            value={formik.values.fname}
+                            id="fname"
+                            onChange={formik.handleChange}
+                            onBlur={formik.handleBlur}
                             type="text"
-
-                            value = {fname}
-                            onChange = {(e) => setFname(e.target.value)}
+                            className={formik.errors.fname && formik.touched.fname? "input-error" : ""}
                         />
+                        {formik.errors.fname && formik.touched.fname && <p className="errormsg">{formik.errors.fname}</p>}
                         <label>Middle Name</label>
-                        <input 
+                        <input
+                            value={formik.values.mname}
+                            id="mname"
+                            onChange={formik.handleChange}
+                            onBlur={formik.handleBlur}
                             type="text"
-
-                            value = {mname}
-                            onChange = {(e) => setMname(e.target.value)}
+                            className={formik.errors.mname && formik.touched.mname? "input-error" : ""}
                         />
+                        {formik.errors.mname && formik.touched.mname && <p className="errormsg">{formik.errors.mname}</p>}
                         <label>Last Name</label>
-                        <input 
+                        <input
+                            value={formik.values.lname}
+                            id="lname"
+                            onChange={formik.handleChange}
+                            onBlur={formik.handleBlur}
                             type="text"
-
-                            value = {lname}
-                            onChange = {(e) => setLname(e.target.value)}
+                            className={formik.errors.lname && formik.touched.lname? "input-error" : ""}
                         />
+                        {formik.errors.lname && formik.touched.lname && <p className="errormsg">{formik.errors.lname}</p>}
                         <label>Date of Birth</label>
-                        <input 
+                        <input
+                            value={formik.values.dateOfBirth}
+                            id="dateOfBirth"
+                            onChange={formik.handleChange}
+                            onBlur={formik.handleBlur}
                             type="text"
-                            placeholder="DD/MM/YYYY"
-                            value = {dateOfBirth}
-                            onChange = {(e) => setDateOfBirth(e.target.value)}
+                            className={formik.errors.dateOfBirth && formik.touched.dateOfBirth? "input-error" : ""}
                         />
+                        {formik.errors.dateOfBirth && formik.touched.dateOfBirth && <p className="errormsg">{formik.errors.dateOfBirth}</p>}
                         <label>Personal Mail ID</label>
-                        <input 
+                        <input
+                            value={formik.values.personalEmailId}
+                            id="personalEmailId"
+                            onChange={formik.handleChange}
+                            onBlur={formik.handleBlur}
                             type="text"
-
-                            value = {personalEmailId}
-                            onChange = {(e) => setPersonalEmailId(e.target.value)}
+                            className={formik.errors.personalEmailId && formik.touched.personalEmailId? "input-error" : ""}
                         />
+                        {formik.errors.personalEmailId && formik.touched.personalEmailId && <p className="errormsg">{formik.errors.personalEmailId}</p>}
                         <label>Contact No.</label>
-                        <input 
+                        <input
+                            value={formik.values.contactNo}
+                            id="contactNo"
+                            onChange={formik.handleChange}
+                            onBlur={formik.handleBlur}
                             type="text"
-
-                            value = {contactNo}
-                            onChange = {(e) => setContactNo(e.target.value)}
+                            className={formik.errors.contactNo && formik.touched.contactNo? "input-error" : ""}
                         />
+                        {formik.errors.contactNo && formik.touched.contactNo && <p className="errormsg">{formik.errors.contactNo}</p>}
                         <label>Physical Address</label>
-                        <input 
+                        <input
+                            value={formik.values.physicalAddress}
+                            id="physicalAddress"
+                            onChange={formik.handleChange}
+                            onBlur={formik.handleBlur}
                             type="text"
-
-                            value = {physicalAddress}
-                            onChange = {(e) => setPhysicalAddress(e.target.value)}
+                            className={formik.errors.physicalAddress && formik.touched.physicalAddress? "input-error" : ""}
                         />
-                        </div>
+                        {formik.errors.physicalAddress && formik.touched.physicalAddress && <p className="errormsg">{formik.errors.physicalAddress}</p>}
+                    </div>
                 </section>
+
                 <section>
                     <h1>Employment Info</h1>
-                        <div>
+                    <div>
                         <label>On-boarding Date</label>
-                        <input 
+                        <input
+                            value={formik.values.onboardingDate}
+                            id="onboardingDate"
+                            onChange={formik.handleChange}
+                            onBlur={formik.handleBlur}
                             type="text"
-                            placeholder="DD/MM/YYYY"
-                            value = {onboardingDate}
-                            onChange = {(e) => setOnboardingDate(e.target.value)}
+                            className={formik.errors.onboardingDate && formik.touched.onboardingDate? "input-error" : ""}
                         />
+                        {formik.errors.onboardingDate && formik.touched.onboardingDate && <p className="errormsg">{formik.errors.onboardingDate}</p>}
                         <label>Start Date</label>
-                        <input 
+                        <input
+                            value={formik.values.startDate}
+                            id="startDate"
+                            onChange={formik.handleChange}
+                            onBlur={formik.handleBlur}
                             type="text"
-                            placeholder="DD/MM/YYYY"
-                            value = {startDate}
-                            onChange = {(e) => setStartDate(e.target.value)}
+                            className={formik.errors.startDate && formik.touched.startDate? "input-error" : ""}
                         />
-
-                        <label>Employee Status Active</label>
-                        <input 
+                        {formik.errors.startDate && formik.touched.startDate && <p className="errormsg">{formik.errors.startDate}</p>}
+                        <label>Employment Status Active</label>
+                        <input
+                            value={formik.values.employeeStatus}
+                            id="employeeStatus"
+                            onChange={formik.handleChange}
+                            onBlur={formik.handleBlur}
                             type="checkbox"
-                            className="checkbox"
-                            checked = {employeeStatus}
-                            onChange = {(e) => setEmployeeStatus(e.target.checked)}
+                            className={formik.errors.employeeStatus && formik.touched.employeeStatus? "input-error" : ""}
                         />
-
+                        {formik.errors.employeeStatus && formik.touched.employeeStatus && <p className="errormsg">{formik.errors.employeeStatus}</p>}
                         <label>Designation</label>
-                        <input 
+                        <input
+                            value={formik.values.designation}
+                            id="designation"
+                            onChange={formik.handleChange}
+                            onBlur={formik.handleBlur}
                             type="text"
-
-                            value = {designation}
-                            onChange = {(e) => setDesignaton(e.target.value)}
+                            className={formik.errors.designation && formik.touched.designation? "input-error" : ""}
                         />
-                        </div>
+                        {formik.errors.designation && formik.touched.designation && <p className="errormsg">{formik.errors.designation}</p>}
+                    </div>
                 </section>
-                
                 <section>
                     <h1>Authorization</h1>
-                        <div>
+                    <div>
                         <label>Work Authorization Type</label>
                         <select
-                        name={workAuth}
-                        value = {workAuth}
-                        onChange = {(e) => setWorkAuth(e.target.value)}
+                            value={formik.values.workAuth}
+                            id="workAuth"
+                            onChange={formik.handleChange}
+                            onBlur={formik.handleBlur}
+                            className={formik.errors.workAuth && formik.touched.workAuth? "input-error" : ""}
                         >
                             <option selected hidden value="">Choose here</option>
                             <option value="H1B">H1B</option>
@@ -243,176 +330,200 @@ const NewEmployee = () => {
                             <option value="GC EAD">GC EAD</option>
                             <option value="Other">Other</option>
                         </select>
-
+                        {formik.errors.workAuth && formik.touched.workAuth && <p className="errormsg">{formik.errors.workAuth}</p>}
                         <label>Work Authorization Start Date</label>
-                        <input 
+                        <input
+                            value={formik.values.workAuthStartDate}
+                            id="workAuthStartDate"
+                            onChange={formik.handleChange}
+                            onBlur={formik.handleBlur}
                             type="text"
-                            placeholder="DD/MM/YYYY"
-
-                            value = {workAuthStartDate}
-                            onChange = {(e) => setWorkAuthStartDate(e.target.value)}
+                            className={formik.errors.workAuthStartDate && formik.touched.workAuthStartDate? "input-error" : ""}
                         />
-
+                        {formik.errors.workAuthStartDate && formik.touched.workAuthStartDate && <p className="errormsg">{formik.errors.workAuthStartDate}</p>}
                         <label>Work Authorization Expiry Date</label>
-                        <input 
+                        <input
+                            value={formik.values.workAuthExpiryDate}
+                            id="workAuthExpiryDate"
+                            onChange={formik.handleChange}
+                            onBlur={formik.handleBlur}
                             type="text"
-                            placeholder="DD/MM/YYYY"
-
-                            value = {workAuthExpiryDate}
-                            onChange = {(e) => setWorkAuthExpiryDate(e.target.value)}
+                            className={formik.errors.workAuthExpiryDate && formik.touched.workAuthExpiryDate? "input-error" : ""}
                         />
-                        </div>
+                        {formik.errors.workAuthExpiryDate && formik.touched.workAuthExpiryDate && <p className="errormsg">{formik.errors.workAuthExpiryDate}</p>}
+                    </div>
+                </section>
+                <section>
+                    <h1>Document Info</h1>
+                    <div>
+                        <label>Passport No</label>
+                        <input
+                            value={formik.values.passportNumber}
+                            id="passportNumber"
+                            onChange={formik.handleChange}
+                            onBlur={formik.handleBlur}
+                            type="text"
+                            className={formik.errors.passportNumber && formik.touched.passportNumber? "input-error" : ""}
+                        />
+                        {formik.errors.passportNumber && formik.touched.passportNumber && <p className="errormsg">{formik.errors.passportNumber}</p>}
+                        <label>Passport Expiry</label>
+                        <input
+                            value={formik.values.passportExpiry}
+                            id="passportExpiry"
+                            onChange={formik.handleChange}
+                            onBlur={formik.handleBlur}
+                            type="text"
+                            className={formik.errors.passportExpiry && formik.touched.passportExpiry? "input-error" : ""}
+                        />
+                        {formik.errors.passportExpiry && formik.touched.passportExpiry && <p className="errormsg">{formik.errors.passportExpiry}</p>}
+                        <label>DL No</label>
+                        <input
+                            value={formik.values.dlNumber}
+                            id="dlNumber"
+                            onChange={formik.handleChange}
+                            onBlur={formik.handleBlur}
+                            type="text"
+                            className={formik.errors.employeeStatus && formik.touched.employeeStatus? "input-error" : ""}
+                        />
+                        {formik.errors.employeeStatus && formik.touched.employeeStatus && <p className="errormsg">{formik.errors.employeeStatus}</p>}
+                        <label>DL Expiry</label>
+                        <input
+                            value={formik.values.dlExpiry}
+                            id="dlExpiry"
+                            onChange={formik.handleChange}
+                            onBlur={formik.handleBlur}
+                            type="text"
+                            className={formik.errors.dlExpiry && formik.touched.dlExpiry? "input-error" : ""}
+                        />
+                        {formik.errors.dlExpiry && formik.touched.dlExpiry && <p className="errormsg">{formik.errors.dlExpiry}</p>}
+                        <label>State ID</label>
+                        <input
+                            value={formik.values.stateID}
+                            id="stateID"
+                            onChange={formik.handleChange}
+                            onBlur={formik.handleBlur}
+                            type="text"
+                            className={formik.errors.stateID && formik.touched.stateID? "input-error" : ""}
+                        />
+                        {formik.errors.stateID && formik.touched.stateID && <p className="errormsg">{formik.errors.stateID}</p>}
+                        <label>State ID Expiry</label>
+                        <input
+                            value={formik.values.stateIDExpiry}
+                            id="stateIDExpiry"
+                            onChange={formik.handleChange}
+                            onBlur={formik.handleBlur}
+                            type="text"
+                            className={formik.errors.stateIDExpiry && formik.touched.stateIDExpiry? "input-error" : ""}
+                        />
+                        {formik.errors.stateIDExpiry && formik.touched.stateIDExpiry && <p className="errormsg">{formik.errors.stateIDExpiry}</p>}
+                        <label>I94 No</label>
+                        <input
+                            value={formik.values.I94No}
+                            id="I94No"
+                            onChange={formik.handleChange}
+                            onBlur={formik.handleBlur}
+                            type="text"
+                            className={formik.errors.I94No && formik.touched.I94No? "input-error" : ""}
+                        />
+                        {formik.errors.I94No && formik.touched.I94No && <p className="errormsg">{formik.errors.I94No}</p>}
+                        <label>I94 Start Date</label>
+                        <input
+                            value={formik.values.I94StartDate}
+                            id="I94StartDate"
+                            onChange={formik.handleChange}
+                            onBlur={formik.handleBlur}
+                            type="text"
+                            className={formik.errors.I94StartDate && formik.touched.I94StartDate? "input-error" : ""}
+                        />
+                        {formik.errors.I94StartDate && formik.touched.I94StartDate && <p className="errormsg">{formik.errors.I94StartDate}</p>}
+                        <label>I94 Expiry Date</label>
+                        <input
+                            value={formik.values.I94ExpiryDate}
+                            id="I94ExpiryDate"
+                            onChange={formik.handleChange}
+                            onBlur={formik.handleBlur}
+                            type="text"
+                            className={formik.errors.I94ExpiryDate && formik.touched.I94ExpiryDate? "input-error" : ""}
+                        />
+                        {formik.errors.I94ExpiryDate && formik.touched.I94ExpiryDate && <p className="errormsg">{formik.errors.I94ExpiryDate}</p>}
+                        <label>I9</label>
+                        <input
+                            value={formik.values.I9}
+                            id="I9"
+                            onChange={formik.handleChange}
+                            onBlur={formik.handleBlur}
+                            type="text"
+                            className={formik.errors.I9 && formik.touched.I9? "input-error" : ""}
+                        />
+                        {formik.errors.I9 && formik.touched.I9 && <p className="errormsg">{formik.errors.I94ExpiryDate}</p>}
+
+                    </div>
                 </section>
                 
                 <section>
-                    <h1>Document Info</h1>
-                        <div>
-                        <label>Passport No</label>
-                        <input 
-                            type="text"
-
-                            value = {passportNumber}
-                            onChange = {(e) => setPassportNumber(e.target.value)}
-                        />
-
-                        <label>Passport Expiry</label>
-                        <input 
-                            type="text"
-                            placeholder="DD/MM/YYYY"
-
-                            value = {passportExpiry}
-                            onChange = {(e) => setPassportExpiry(e.target.value)}
-                        />
-
-                        <label>DL No</label>
-                        <input 
-                            type="text"
-
-                            value = {dlNumber}
-                            onChange = {(e) => setDLNumber(e.target.value)}
-                        />
-
-                        <label>DL Expiry</label>
-                        <input 
-                            type="text"
-                            placeholder="DD/MM/YYYY"
-
-                            value = {dlExpiry}
-                            onChange = {(e) => setDLExpiry(e.target.value)}
-                        />
-
-                        <label>State ID</label>
-                        <input 
-                            type="text"
-
-                            value = {stateID}
-                            onChange = {(e) => setStateID(e.target.value)}
-                        />
-
-                        <label>State Id Expiry</label>
-                        <input 
-                            type="text"
-                            placeholder="DD/MM/YYYY"
-
-                            value = {stateIDExpiry}
-                            onChange = {(e) => setStateIDExpiry(e.target.value)}
-                        />
-                        <label>I94 No</label>
-                        <input 
-                            type="text"
-
-                            value = {I94No}
-                            onChange = {(e) => setI94No(e.target.value)}
-                        />
-
-                        <label>I94 Start Date</label>
-                        <input 
-                            type="text"
-                            placeholder="DD/MM/YYYY"
-
-                            value = {I94StartDate}
-                            onChange = {(e) => setI94StartDate(e.target.value)}
-                        />
-
-                        <label>I94 Expiry Date</label>
-                        <input 
-                            type="text"
-                            placeholder="DD/MM/YYYY"
-
-                            value = {I94ExpiryDate}
-                            onChange = {(e) => setI94ExpiryDate(e.target.value)}
-                        />
-
-                        <label>I9</label>
-                        <input 
-                            type="text"
-
-                            value = {I9}
-                            onChange = {(e) => setI9(e.target.value)}
-                        />
-                        </div>
-                </section>
-                <section>
                     <h1>Other Info</h1>
-                        <div>
+                    <div>
                         <label>E-Verify</label>
-                        <input 
+                        <input
+                            value={formik.values.eVerify}
+                            id="eVerify"
+                            onChange={formik.handleChange}
+                            onBlur={formik.handleBlur}
                             type="checkbox"
-                            className="checkbox"
-                            checked = {eVerify}
-                            onChange = {(e) => setEVerify(e.target.checked)}
+                            className={formik.errors.eVerify && formik.touched.eVerify? "input-error" : ""}
                         />
-
+                        {formik.errors.eVerify && formik.touched.eVerify && <p className="errormsg">{formik.errors.eVerify}</p>}
                         <label>Total Amendments</label>
-                        <input 
+                        <input
+                            value={formik.values.totalAmendments}
+                            id="totalAmendments"
+                            onChange={formik.handleChange}
+                            onBlur={formik.handleBlur}
                             type="text"
-
-                            value = {totalAmendments}
-                            onChange = {(e) => setTotalAmendments(e.target.value)}
+                            className={formik.errors.totalAmendments && formik.touched.totalAmendments? "input-error" : ""}
                         />
-
-                        <label>TotalExtensions</label>
-                        <input 
+                        {formik.errors.totalAmendments && formik.touched.totalAmendments && <p className="errormsg">{formik.errors.totalAmendments}</p>}
+                        <label>Total Extensions</label>
+                        <input
+                            value={formik.values.totalExtensions}
+                            id="totalExtensions"
+                            onChange={formik.handleChange}
+                            onBlur={formik.handleBlur}
                             type="text"
-
-                            value = {totalExtensions}
-                            onChange = {(e) => setTotalExtensions(e.target.value)}
+                            className={formik.errors.totalExtensions && formik.touched.totalExtensions? "input-error" : ""}
                         />
-
-
+                        {formik.errors.totalExtensions && formik.touched.totalExtensions && <p className="errormsg">{formik.errors.totalExtensions}</p>}
                         <label>Payroll Address</label>
-                        <input 
+                        <input
+                            value={formik.values.payrollAddress}
+                            id="payrollAddress"
+                            onChange={formik.handleChange}
+                            onBlur={formik.handleBlur}
                             type="text"
-
-                            value = {payrollAddress}
-                            onChange = {(e) => setPayrollAddress(e.target.value)}
+                            className={formik.errors.payrollAddress && formik.touched.payrollAddress? "input-error" : ""}
                         />
-
-                        <label>Payroll State</label>
-                        <input 
-                            type="text"
-
-                            value = {payrollState}
-                            onChange = {(e) => setPayrollState(e.target.value)}
-                        />
-
-
-
+                        {formik.errors.payrollAddress && formik.touched.payrollAddress && <p className="errormsg">{formik.errors.payrollAddress}</p>}
                         <label>Physical State</label>
-                        <input 
+                        <input
+                            value={formik.values.physicalState}
+                            id="physicalState"
+                            onChange={formik.handleChange}
+                            onBlur={formik.handleBlur}
                             type="text"
-
-                            value = {physicalState}
-                            onChange = {(e) => setPhysicalState(e.target.value)}
+                            className={formik.errors.physicalState && formik.touched.physicalState? "input-error" : ""}
                         />
+                        {formik.errors.physicalState && formik.touched.physicalState && <p className="errormsg">{formik.errors.physicalState}</p>}
                         <label>University Name</label>
-                        <input 
+                        <input
+                            value={formik.values.universityName}
+                            id="universityName"
+                            onChange={formik.handleChange}
+                            onBlur={formik.handleBlur}
                             type="text"
-
-                            value = {universityName}
-                            onChange = {(e) => setUniversityName(e.target.value)}
+                            className={formik.errors.universityName && formik.touched.universityName? "input-error" : ""}
                         />
-                        </div>
+                        {formik.errors.universityName && formik.touched.universityName && <p className="errormsg">{formik.errors.universityName}</p>}
+                    </div>
                 </section>
                 <section>
                     <h1>Document Upload</h1>
@@ -436,15 +547,9 @@ const NewEmployee = () => {
                 <br />
                 </div>
                 </section>
-
-                
-
-                
-
-
-
-                <button onClick={handleSubmit}>Add Employee</button>
+                <button onClick={formik.handleSubmit}>Add Employee</button>
             </form>
+            
         </div>
      );
 }

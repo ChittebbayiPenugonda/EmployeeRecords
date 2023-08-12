@@ -3,7 +3,7 @@ import {Route, Redirect} from 'react-router-dom';
 import {AuthContext} from './Auth.js';
 import { getDocs, collection, deleteDoc, addDoc, doc } from 'firebase/firestore';
 import {db, auth} from './config/firebase';
-const PrivateRoute = ({ component: RouteComponent, ...rest}) => {
+const LowUserRoute = ({ component: RouteComponent, ...rest}) => {
     const {currentUser} = useContext(AuthContext);
     
     let isAuthorizedUser = false;
@@ -58,7 +58,7 @@ const PrivateRoute = ({ component: RouteComponent, ...rest}) => {
         
     }
     useEffect(() => {
-        //console.log('pls');
+        console.log('pls');
     },[setGo]);
 
     useEffect(() => {
@@ -74,7 +74,7 @@ const PrivateRoute = ({ component: RouteComponent, ...rest}) => {
         <Route
         {...rest}
         render = { () => 
-            (go) ? (<RouteComponent />) : ((lowgo) ? (<Redirect to={"/employee/" + lowgoID} />) :  (<Redirect to={"/"} />))
+            (go || lowgo) ? (<RouteComponent />) : (<Redirect to={"/"} />)
 
         }
     />
@@ -94,4 +94,4 @@ const PrivateRoute = ({ component: RouteComponent, ...rest}) => {
 
 
  */
-export default PrivateRoute;
+export default LowUserRoute;

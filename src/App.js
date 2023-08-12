@@ -8,6 +8,7 @@ import ActiveEmployeeList from './ActiveEmployeeList';
 import ExEmployeeList from './ExEmployeeList.js';
 import {AuthProvider} from './Auth.js';
 import PrivateRoute from './PrivateRoute.js';
+import LowUserRoute from './LowUserRoute';
 import EmployeeDeleted from './EmployeeDeleted.js'
 import Login from './Login';
 
@@ -22,7 +23,7 @@ function App() {
           <PrivateRoute exact path='/exemployeelist' component={ExEmployeeList} />
           <PrivateRoute exact path='/dashboard' component={Dashboard} />
           <PrivateRoute exact path='/newemployee' component={NewEmployee} />
-          <PrivateRoute exact path='/employee/:id' component={Employee} />
+          <LowUserRoute exact path='/employee/:id' component={Employee} />
           <PrivateRoute exact path='/employeedeleted' component={EmployeeDeleted} />
         </Switch>
       </Router>
